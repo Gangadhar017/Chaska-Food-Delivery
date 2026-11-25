@@ -2,9 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>swiggy_01</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Chaska · Food delivery from the kitchens around you</title>
+    <meta name="description" content="Chaska is a food ordering app: browse restaurants near you, customise dishes, apply offers, check out and follow your order to the door." />
+    <meta name="theme-color" content="#0d4a37" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content="Chaska · Food delivery from the kitchens around you" />
+    <meta property="og:description" content="Browse restaurants, customise dishes, apply offers and track your order live." />
+    <meta property="og:type" content="website" />
+    <script>
+      // Set the theme before the first paint so the page never flashes the wrong one.
+      try {
+        var saved = localStorage.getItem('chaska.theme')
+        var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+      } catch (e) {
+        document.documentElement.dataset.theme = 'light'
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
