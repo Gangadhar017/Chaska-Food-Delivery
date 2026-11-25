@@ -1,49 +1,172 @@
-import React from 'react'
-import { IoSearch } from "react-icons/io5";
-import { BiSolidOffer } from "react-icons/bi";
-import { IoIosHelpBuoy } from "react-icons/io";
-import { CgProfile } from "react-icons/cg";
-import { FaCartShopping } from "react-icons/fa6";
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import {
+  PiCaretDown, PiHeart, PiMagnifyingGlass, PiMapPinFill, PiMoon, PiQuestion, PiReceipt, PiSealPercent,
+  PiShoppingBag, PiSignOut, PiSun, PiUser, PiUserCircle,
+} from 'react-icons/pi'
+import { usePlace } from '../app/place.jsx'
+import { useSession } from '../app/session.jsx'
+import { cartCount, useCart } from '../lib/cart.js'
+import { setTheme, toast, useTheme } from '../lib/ui.js'
+import Logo from './Logo.jsx'
 
-function Header() {
+function HeaderSearch() {
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const onSearchPage = pathname === '/search'
+  const [text, setText] = useState('')
+
+  useEffect(() => {
+    if (!onSearchPage) setText('')
+  }, [onSearchPage])
+
+  // The search page has its own, larger box.
+  if (onSearchPage) return <div className="hidden flex-1 md:block" />
+
   return (
-    <div>
-        <nav className=' dark:bg-gray-900 text-white flex justify-between items-center px-12 h-20'>
-            <svg class="VXJlj" viewBox="0 0 61 61" height="49" width="49"><g clip-path="url(#a)"><path fill="#FF5200" d="M.32 30.5c0-12.966 0-19.446 3.498-23.868a16.086 16.086 0 0 1 2.634-2.634C10.868.5 17.354.5 30.32.5s19.446 0 23.868 3.498c.978.774 1.86 1.656 2.634 2.634C60.32 11.048 60.32 17.534 60.32 30.5s0 19.446-3.498 23.868a16.086 16.086 0 0 1-2.634 2.634C49.772 60.5 43.286 60.5 30.32 60.5s-19.446 0-23.868-3.498a16.086 16.086 0 0 1-2.634-2.634C.32 49.952.32 43.466.32 30.5Z"></path><path fill="#fff" fill-rule="evenodd" d="M32.317 24.065v-6.216a.735.735 0 0 0-.732-.732.735.735 0 0 0-.732.732v7.302c0 .414.336.744.744.744h.714c10.374 0 11.454.54 10.806 2.73-.03.108-.066.21-.102.324-.006.024-.012.048-.018.066-2.724 8.214-10.092 18.492-12.27 21.432a.764.764 0 0 1-1.23 0c-1.314-1.776-4.53-6.24-7.464-11.304-.198-.462-.294-1.542 2.964-1.542h3.984c.222 0 .402.18.402.402v3.216c0 .384.282.738.666.768a.73.73 0 0 0 .582-.216.701.701 0 0 0 .216-.516v-4.362a.76.76 0 0 0-.756-.756h-8.052c-1.404 0-2.256-1.2-2.814-2.292-1.752-3.672-3.006-7.296-3.006-10.152 0-7.314 5.832-13.896 13.884-13.896 7.17 0 12.6 5.214 13.704 11.52.006.054.048.294.054.342.288 3.096-7.788 2.742-11.184 2.76a.357.357 0 0 1-.36-.36v.006Z" clip-rule="evenodd"></path></g><defs><clipPath id="a"><path fill="#fff" d="M.32.5h60v60h-60z"></path></clipPath></defs></svg>
-            <ul className='flex'>
-               <div className='flex mx-4'>
-                    <span className='text-2xl mt-1'> <IoSearch /> </span>
-                    <li className='ml-4 text-2xl'>Search</li>
-               </div>
-               <div className='flex mx-4'>
-                    <span className='text-2xl mt-1'> <BiSolidOffer /> </span>
-                    <Link to='/offer'>
-                        <li className='ml-4 text-2xl'>Offers</li>
-                    </Link>
-               </div>
-                <div className='flex mx-4'>
-                    <span className='text-2xl mt-1'> <IoIosHelpBuoy/> </span>
-                    <Link to='/help'>
-                        <li className='ml-4 text-2xl'>Help</li>
-                    </Link>
-                </div>
-                <div className='flex mx-4'>
-                    <span className='text-2xl mt-1'> <CgProfile /></span>
-                    <Link to='/signin'>
-                        <li className='ml-4 text-2xl'>Signin</li>
-                    </Link>
-                </div>
-                <div className='flex mx-4'>
-                    <span className='text-2xl mt-1'> <FaCartShopping/> </span>
-                    <Link to='/cart'>
-                        <li className='ml-4 text-2xl'>Cart</li>
-                    </Link>
-                </div>
-            </ul>
-        </nav>
+    <form
+      role="search"
+      className="relative hidden max-w-md flex-1 md:block"
+      onSubmit={(event) => {
+        event.preventDefault()
+        navigate(`/search${text.trim() ? `?q=${encodeURIComponent(text.trim())}` : ''}`)
+      }}
+    >
+      <PiMagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-band-soft" />
+      <input
+        type="search"
+        value={text}
+        onChange={(event) => setText(event.target.value)}
+        placeholder="Search for biryani, dosa, a restaurant…"
+        aria-label="Search restaurants and dishes"
+        className="h-10 w-full rounded-lg border border-band-line bg-band-well pl-10 pr-3 text-[0.97rem] text-on-band placeholder:text-band-soft focus:border-marigold focus:outline-none"
+      />
+    </form>
+  )
+}
+
+function AccountMenu() {
+  const { user, signOut } = useSession()
+  const theme = useTheme()
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (!open) return
+    const close = (event) => {
+      if (event.type === 'keydown' ? event.key === 'Escape' : !ref.current?.contains(event.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', close)
+    document.addEventListener('keydown', close)
+    return () => {
+      document.removeEventListener('mousedown', close)
+      document.removeEventListener('keydown', close)
+    }
+  }, [open])
+
+  const item = 'flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-[0.97rem] text-ink hover:bg-sunken'
+  const links = [
+    ['/orders', PiReceipt, 'Orders'],
+    ['/account/favourites', PiHeart, 'Favourites'],
+    ['/account/addresses', PiMapPinFill, 'Addresses'],
+    ['/account', PiUser, 'Profile'],
+  ]
+
+  return (
+    <div ref={ref} className="relative">
+      <button type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-haspopup="menu" className="flex h-10 items-center gap-2 rounded-lg px-2.5 font-medium hover:bg-band-well">
+        <PiUserCircle size={22} />
+        <span className="max-w-28 truncate">{user.name.split(' ')[0]}</span>
+        <PiCaretDown size={13} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div role="menu" className="absolute right-0 top-12 w-60 animate-rise rounded-xl border border-line bg-card p-1.5 text-ink shadow-[0_18px_40px_-18px_rgb(8_16_12/0.45)]">
+          <p className="truncate px-3 pb-2 pt-1.5 text-sm text-faint">{user.email}</p>
+          {links.map(([to, Icon, label]) => (
+            <Link key={to} to={to} role="menuitem" className={item} onClick={() => setOpen(false)}>
+              <Icon size={18} className="text-soft" /> {label}
+            </Link>
+          ))}
+          <div className="my-1.5 h-px bg-line" />
+          <button type="button" role="menuitem" className={item} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+            {theme === 'dark' ? <PiSun size={18} className="text-soft" /> : <PiMoon size={18} className="text-soft" />}
+            {theme === 'dark' ? 'Light theme' : 'Dark theme'}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className={item}
+            onClick={() => {
+              setOpen(false)
+              signOut()
+              toast('You have been signed out.')
+              navigate('/')
+            }}
+          >
+            <PiSignOut size={18} className="text-soft" /> Sign out
+          </button>
+        </div>
+      )}
     </div>
   )
 }
 
-export default Header
+export default function Header() {
+  const { locality, city, openPicker } = usePlace()
+  const { user, status, askToSignIn } = useSession()
+  const theme = useTheme()
+  const count = cartCount(useCart())
+
+  const navLink = ({ isActive }) => `flex h-10 items-center gap-2 rounded-lg px-2.5 font-medium transition-colors hover:bg-band-well ${isActive ? 'text-marigold' : ''}`
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-band-line bg-band text-on-band">
+      <div className="wrap flex h-16 items-center gap-2 sm:gap-4 lg:gap-5">
+        <Link to="/" aria-label="Chaska home" className="shrink-0 rounded-md">
+          <Logo compact />
+        </Link>
+
+        <button type="button" onClick={openPicker} className="group flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-band-well" aria-label={`Delivery location: ${locality?.name || 'choose'}. Change`}>
+          <PiMapPinFill size={18} className="shrink-0 text-marigold" />
+          <span className="min-w-0 leading-tight">
+            <span className="kicker block text-band-soft">Deliver to</span>
+            <span className="block truncate font-semibold">
+              {locality ? locality.name : 'Choose location'}
+              {city && <span className="hidden font-normal text-band-soft sm:inline">, {city.name}</span>}
+            </span>
+          </span>
+          <PiCaretDown size={13} className="shrink-0 text-band-soft" />
+        </button>
+
+        <HeaderSearch />
+
+        <nav className="ml-auto hidden items-center gap-1 lg:flex" aria-label="Main">
+          <NavLink to="/offers" className={navLink}><PiSealPercent size={20} /> Offers</NavLink>
+          <NavLink to="/help" className={navLink}><PiQuestion size={20} /> Help</NavLink>
+          {user ? (
+            <AccountMenu />
+          ) : (
+            <button type="button" className="flex h-10 items-center gap-2 rounded-lg px-2.5 font-medium hover:bg-band-well" onClick={() => askToSignIn()} disabled={status === 'checking'}>
+              <PiUser size={20} /> Sign in
+            </button>
+          )}
+          <Link to="/checkout" className="btn btn-accent btn-sm ml-2 h-10 px-3.5" aria-label={`Cart, ${count} ${count === 1 ? 'item' : 'items'}`}>
+            <PiShoppingBag size={19} />
+            Cart
+            {count > 0 && <span className="num grid h-5 min-w-5 place-items-center rounded-full bg-on-marigold px-1 text-[0.75rem] text-marigold">{count}</span>}
+          </Link>
+        </nav>
+
+        <div className="ml-auto flex shrink-0 items-center lg:hidden">
+          <Link to="/account" aria-label={user ? 'Your account' : 'Sign in'} className="grid size-10 place-items-center rounded-lg hover:bg-band-well">
+            {user ? <PiUserCircle size={22} /> : <PiUser size={20} />}
+          </Link>
+          <button type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'} className="grid size-10 place-items-center rounded-lg hover:bg-band-well">
+            {theme === 'dark' ? <PiSun size={20} /> : <PiMoon size={20} />}
+          </button>
+        </div>
+      </div>
+    </header>
+  )
+}
