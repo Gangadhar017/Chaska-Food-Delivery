@@ -19,6 +19,9 @@ const Offers = lazy(() => import('./pages/Offers.jsx'))
 const Help = lazy(() => import('./pages/Help.jsx'))
 const SignIn = lazy(() => import('./pages/SignIn.jsx'))
 
+// On GitHub Pages the app lives under /<repository>/, so routes hang off Vite's base path.
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
+
 const router = createBrowserRouter([
   {
     element: <App />,
@@ -39,7 +42,7 @@ const router = createBrowserRouter([
       { path: '*', element: <NotFound /> },
     ],
   },
-])
+], { basename })
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -53,7 +53,7 @@ export function Crash() {
         <p className="kicker mb-2">Something broke</p>
         <h1 className="text-3xl">This page fell over</h1>
         <p className="mx-auto mt-3 max-w-sm text-soft">It is on us, not you. Reloading usually sorts it out.</p>
-        <button type="button" className="btn btn-primary mt-6" onClick={() => window.location.assign('/')}>Back to the home page</button>
+        <button type="button" className="btn btn-primary mt-6" onClick={() => window.location.assign(import.meta.env.BASE_URL)}>Back to the home page</button>
       </div>
     </div>
   )
