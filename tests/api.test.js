@@ -257,3 +257,19 @@ test('the demo account is seeded once, with addresses', async () => {
   assert.equal(user.name, DEMO_ACCOUNT.name)
   assert.equal((await h.call('GET', '/me/addresses', { token })).items.length, 2)
 })
+
+test('a demo account created under its former name is renamed', async () => {
+  const h = harness()
+  await seedDemoAccount(h)
+  const demo = await h.store.findUserByEmail(DEMO_ACCOUNT.email)
+
+  await h.store.updateUser(demo.id, { name: 'Aarav Sharma' })
+  await seedDemoAccount(h)
+  assert.equal((await h.store.findUserByEmail(DEMO_ACCOUNT.email)).name, 'Gangadhar Singh')
+
+  // A name someone typed into the profile themselves is left alone.
+  await h.store.updateUser(demo.id, { name: 'Someone Else' })
+  await seedDemoAccount(h)
+  assert.equal((await h.store.findUserByEmail(DEMO_ACCOUNT.email)).name, 'Someone Else')
+  assert.equal((await h.call('GET', '/me/addresses', { token: (await h.call('POST', '/auth/login', { body: DEMO_ACCOUNT })).token })).items.length, 2)
+})

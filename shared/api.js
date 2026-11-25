@@ -11,7 +11,9 @@ import { buildQuote, RULES } from './core/pricing.js'
 import { assignRider, planOrder, trackOrder } from './core/tracking.js'
 import { ApiError, badRequest, conflict, hash, notFound, unauthorized } from './core/util.js'
 
-export const DEMO_ACCOUNT = { name: 'Aarav Sharma', email: 'demo@chaska.app', password: 'chaska-demo', phone: '9876543210' }
+export const DEMO_ACCOUNT = { name: 'Gangadhar Singh', email: 'demo@chaska.app', password: 'chaska-demo', phone: '9876543210' }
+// What the demo account was called before. Accounts created back then are renamed when the app starts.
+const FORMER_DEMO_NAME = 'Aarav Sharma'
 
 const PAYMENT_METHODS = {
   upi: 'UPI',
@@ -366,7 +368,11 @@ export function createApi({ store, env, config = {} }) {
 
 /** Create the demo account with two saved addresses, if it is not there yet. */
 export async function seedDemoAccount({ store, env }) {
-  if (await store.findUserByEmail(DEMO_ACCOUNT.email)) return
+  const existing = await store.findUserByEmail(DEMO_ACCOUNT.email)
+  if (existing) {
+    if (existing.name === FORMER_DEMO_NAME) await store.updateUser(existing.id, { name: DEMO_ACCOUNT.name })
+    return
+  }
   const catalog = getCatalog()
   const now = env.now()
   const user = {
