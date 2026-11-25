@@ -4,6 +4,8 @@
 
 *Chaska* (चस्का) is Hindi for a taste you keep going back for.
 
+**Live demo:** https://gangadhar017.github.io/Chaska-Food-Delivery/ &nbsp;·&nbsp; choose *Continue with the demo account* on the sign-in form to skip registration.
+
 ![Chaska home page](docs/screenshots/home.jpg)
 
 ## What it does
@@ -64,7 +66,7 @@ flowchart LR
 That gives two ways to run the same application:
 
 - **Full stack.** Express serves the API with SQLite behind it, and in production also serves the built web app.
-- **Static demo.** With no API URL configured, the web app loads the same API core in the browser and keeps its data in `localStorage`. It can be hosted as plain static files, with no server at all.
+- **Static demo.** With no API URL configured, the web app loads the same API core in the browser and keeps its data in `localStorage`. The live demo runs this way, so it needs no server at all.
 
 Routes, validation and business rules are identical in both, because they are literally the same code. The test suite exercises the core directly and then again over HTTP.
 
@@ -170,6 +172,7 @@ npm test
 
 ## Deploying
 
+- **Static demo on GitHub Pages.** [`pages.yml`](.github/workflows/pages.yml) builds the app with the repository name as its base path and publishes it on every push to `main`. This is how the live demo is deployed.
 - **Static demo on Vercel.** Import the repository; the defaults work. [`vercel.json`](vercel.json) sends every path to the app so deep links load.
 - **Full stack on Render.** [`render.yaml`](render.yaml) is a blueprint for a single Node service that builds the web app and serves it together with the API. Render's free plan has no persistent disk, so the database starts empty after each restart and the demo account is created again.
 
