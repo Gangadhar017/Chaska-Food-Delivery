@@ -168,7 +168,7 @@ tests/             catalog, pricing, API and HTTP tests
 npm test
 ```
 
-42 tests cover the catalog's integrity, line pricing with sizes and add-ons, every coupon rule, the bill arithmetic, the order lifecycle, the whole API (accounts, addresses, favourites, quotes, orders, cancellation, ratings, and who is allowed to see what), and the same flows again over HTTP against a real SQLite file, including a restart in the middle.
+43 tests cover the catalog's integrity, line pricing with sizes and add-ons, every coupon rule, the bill arithmetic, the order lifecycle, the whole API (accounts, addresses, favourites, quotes, orders, cancellation, ratings, and who is allowed to see what), and the same flows again over HTTP against a real SQLite file, including a restart in the middle.
 
 ## Deploying
 
