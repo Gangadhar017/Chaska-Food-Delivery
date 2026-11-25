@@ -4,8 +4,6 @@
 
 *Chaska* (चस्का) is Hindi for a taste you keep going back for.
 
-**Live demo:** https://swiggy-clone-three-zeta.vercel.app &nbsp;·&nbsp; choose *Continue with the demo account* on the sign-in form to skip registration.
-
 ![Chaska home page](docs/screenshots/home.jpg)
 
 ## What it does
@@ -66,7 +64,7 @@ flowchart LR
 That gives two ways to run the same application:
 
 - **Full stack.** Express serves the API with SQLite behind it, and in production also serves the built web app.
-- **Static demo.** With no API URL configured, the web app loads the same API core in the browser and keeps its data in `localStorage`. This is what the live demo runs, so it needs no server at all.
+- **Static demo.** With no API URL configured, the web app loads the same API core in the browser and keeps its data in `localStorage`. It can be hosted as plain static files, with no server at all.
 
 Routes, validation and business rules are identical in both, because they are literally the same code. The test suite exercises the core directly and then again over HTTP.
 
