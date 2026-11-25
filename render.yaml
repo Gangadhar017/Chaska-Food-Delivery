@@ -1,0 +1,15 @@
+# Render blueprint for the full-stack build: one Node service that serves the API and the web app.
+services:
+  - type: web
+    name: chaska
+    runtime: node
+    plan: free
+    # NODE_ENV is production on Render, so dev dependencies (Vite) have to be asked for.
+    buildCommand: npm ci --include=dev && VITE_API_URL=/api npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: AUTH_SECRET
+        generateValue: true
