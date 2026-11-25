@@ -1,6 +1,20 @@
 import { PiCheckBold, PiCopy } from 'react-icons/pi'
 import { useState } from 'react'
 
+/** The Clipboard API needs HTTPS. On a plain http page, fall back to copying from a hidden field. */
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text)
+  const field = document.createElement('textarea')
+  field.value = text
+  field.setAttribute('readonly', '')
+  field.style.cssText = 'position:fixed;opacity:0;pointer-events:none'
+  document.body.appendChild(field)
+  field.select()
+  const copied = document.execCommand('copy')
+  field.remove()
+  if (!copied) throw new Error('Copy is not available')
+}
+
 function stubLabel(coupon) {
   if (coupon.type === 'percent') return [`${coupon.value}%`, 'off']
   if (coupon.type === 'flat') return [`₹${coupon.value}`, 'off']
@@ -18,7 +32,7 @@ export default function CouponTicket({ coupon, onApply, applied = false, disable
 
   async function copy() {
     try {
-      await navigator.clipboard.writeText(coupon.code)
+      await copyText(coupon.code)
       setCopied(true)
       setTimeout(() => setCopied(false), 1800)
     } catch {
